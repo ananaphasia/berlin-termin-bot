@@ -5,6 +5,7 @@ DIST_DIR = dist
 DOWNLOAD_DIR_MACOS_INTEL = download/macos/intelchip
 DOWNLOAD_DIR_MACOS_APPLE = download/macos/applechip
 DOWNLOAD_DIR_WINDOWS = download\windows
+DOWNLOAD_DIR_LINUX = download/linux/
 SRC_FILE = berlin-termin-bot.py
 OUTPUT_FILE = berlin-termin-bot
 INSTRUCTION_FILE = instructions.txt
@@ -13,6 +14,7 @@ ZIP_CMD = zip -r
 ZIP_OUTPUT_MACOS_APPLE = $(DOWNLOAD_DIR_MACOS_APPLE)/$(OUTPUT_FILE)_macosapple.zip
 ZIP_OUTPUT_MACOS_INTEL = $(DOWNLOAD_DIR_MACOS_INTEL)/$(OUTPUT_FILE)_macosintel.zip
 ZIP_OUTPUT_WINDOWS = $(DOWNLOAD_DIR_WINDOWS)\$(OUTPUT_FILE)_windows.zip
+ZIP_OUTPUT_LINUX = 
 ADD_DATA = "*.mp3:."
 PYTHON_SITE_PACKAGES = $(VENV_DIR)/lib/python3.*/site-packages/
 
@@ -24,10 +26,10 @@ help:
 	@echo "  build_macos-applechip  - Build application for macOS Apple chip and create ZIP package."
 	@echo "  build_macos-intelchip  - Build application for macOS Intel chip and create ZIP package."
 	@echo "  build_windows          - Build application for Windows and create ZIP package."
+	@echo "  build_linux 			- Build application for linux and create ZIP package.""
 
 install:
-#	python311 -m venv $(VENV_DIR)
-#	$(VENV_DIR)\Scripts\activate && 
+	python311 -m venv $(VENV_DIR) $(VENV_DIR)\Scripts\activate && 
 	pip311 install -r $(REQS_FILE)
 	@echo "Installation complete. Virtual environment and dependencies set up."
 
@@ -54,6 +56,12 @@ build_windows: build
 	del /q $(DOWNLOAD_DIR_WINDOWS)\*
 	powershell Compress-Archive -Path $(OUTPUT_FILE) -DestinationPath $(ZIP_OUTPUT_WINDOWS)
 	@echo "Build and packaging complete for windows. ZIP file created at $(ZIP_OUTPUT_WINDOWS)."
+
+build_linux: build
+	mkdir -p $(DOWNLOAD_DIR_LINUX)
+	rm -f $(DOWNLOAD_DIR_LINUX)/*
+	$(ZIP_CMD) $(ZIP_OUTPUT_LINUX) $(OUTPUT_FILE) $(INSTRUCTION_FILE)
+	@echo "Build and packaging complete for Linux (WSL). ZIP file created at $(ZIP_OUTPUT_LINUX)."
 
 release:
 	gh release delete v1.0.0
