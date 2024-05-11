@@ -29,8 +29,8 @@ help:
 	@echo "  build_linux 			- Build application for linux and create ZIP package.""
 
 install:
-	python311 -m venv $(VENV_DIR) $(VENV_DIR)\Scripts\activate && 
-	pip311 install -r $(REQS_FILE)
+	python3 -m venv $(VENV_DIR)
+	source $(VENV_DIR)/bin/activate && pip3 install -r $(REQS_FILE)
 	@echo "Installation complete. Virtual environment and dependencies set up."
 
 build: install
