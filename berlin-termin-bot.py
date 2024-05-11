@@ -1,8 +1,7 @@
 import sys
-# import termios
-import msvcrt
-# import tty
-# import select
+import termios
+import tty
+import select
 import time
 import platform
 import os
@@ -303,8 +302,16 @@ def send_notification(title, message):
 
 
 def clear_input_buffer():
-    while msvcrt.kbhit():
-        msvcrt.getch()
+    old_settings = termios.tcgetattr(sys.stdin)
+    tty.setcbreak(sys.stdin.fileno())
+    try:
+        while True:
+            if select.select([sys.stdin], [], [], 0)[0]:
+                sys.stdin.read(1)
+            else:
+                break
+    finally:
+        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
 
 
 def get_input(q):
